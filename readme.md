@@ -17,3 +17,13 @@ https://snap.stanford.edu/data/egonets-Twitter.html
 
 ##Deadline
 5月26日 星期五
+
+#PageRank
+##计算表达式
+v' = p * dot(M,v) + (1-p)*e / n
+##M矩阵存储方案
+python: dict -> list
+M = {3: {19:1, 112:1, 3700:1, 3789:1, ... , 892303:1}, 4: [71:1, 123:1, 980:1, ..., 12303:1], ...}
+
+1) 获取某个结点的出度: len(M[3])
+2)
