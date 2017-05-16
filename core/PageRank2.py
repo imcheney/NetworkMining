@@ -1,5 +1,5 @@
 from numpy import *
-
+import time
 # 输入测试数据: 收获票数矩阵
 # a[2][1]代表结点V[2]收到来自结点V[1]的1个单位投票
 # a = array([[0, 1, 1, 0],
@@ -7,7 +7,10 @@ from numpy import *
 #            [1, 0, 0, 1],
 #            [1, 1, 0, 0]], dtype=float)  # dtype指定为float
 
+import redis
+r = redis.StrictRedis(host='localhost', port=6379, charset="utf-8", decode_responses=True)
 a = {1: {2: 1,3: 1,4: 1}, 2: {1: 1, 4: 1}, 3: {1: 1}, 4: {2: 1, 3: 1}}
+DICT_NAME = "twitterLarge"
 
 
 def graphMove(a):  # 构造转移矩阵
@@ -35,7 +38,7 @@ def multiply(m, v):
     for i in range(len(v)):  # 0~3
         t = 0.0
         for key in m.keys():
-            if (m[key].__contains__(i+1)): t += m[key][i+1] * v[key-1]  # t += your share of V[key] * importance of V[key]
+            if m[key].__contains__(i+1): t += m[key][i + 1] * v[key - 1]  # t += your share of V[key] * importance of V[key]
         L.append(t)
     # print("L", L)
     return array(L)
@@ -44,21 +47,39 @@ def multiply(m, v):
 def pageRank(p, m, v):  # 计算pageRank值
     """初始化"""
     e = v  # e = [1/n, 1/n ... , 1/n] with n dimension
-    h = e/1000
+    h = e/10000
     count = 0
     nextV = p*multiply(m, v) + (1-p)*e
     while not (v-nextV <= h).all():
         v = nextV
         nextV = p * multiply(m, v) + (1 - p) * e  # update nextV
         count += 1
-    print("used rounds count: ", count)
+    print("迭代轮数 used rounds count: ", count)
     return v
 
 
+def retrieveFromRedis():
+    d1 = r.hgetall(DICT_NAME)
+    for key in d1.keys():
+        if d1[key][0] == '{':
+            tempD = eval(d1[key])
+            d1[key] = tempD
+    return d1
+
+
+def retrieveFromTest():
+    return a
+
+
 if __name__ == "__main__":
-    print("input graph in dict structure: ", a)
-    m = graphMove(a)
+    print("====PageRank执行, 计时开始")
+    startTime = time.time()
+    d1 = retrieveFromRedis()
+    m = graphMove(d1)
     N = len(m)
     pr = initPr(N)
     p = 0.8  # 引入浏览当前网页的概率为p,假设p=0.8, 剩下的0.2是抽税, 会被均匀分给所有人
-    print("result: \n", pageRank(p, m, pr))  # 计算pr值
+    PRresult = pageRank(p, m, pr)
+    print("result: \n", PRresult)  # 计算pr值
+    r.set("pageRankResult", PRresult.tolist())
+    print("====结束时间: ", time.time() - startTime)
