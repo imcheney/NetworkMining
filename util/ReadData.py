@@ -1,5 +1,6 @@
 
-#to read data into the sys
+# to read data into the redis
+# TODO: need to utilize redis
 import time
 import csv
 import redis

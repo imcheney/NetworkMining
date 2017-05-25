@@ -2,12 +2,12 @@
 
 import time
 import networkx as nx
-from util import RedisUtil as ru
+
 
 '''some static vars need to set before pageRank goes'''
-filename = '/Users/Chen/Desktop/计算社会学/largeDataset/data/edges.csv'
-    # '/Users/Chen/Desktop/计算社会学/smallDataset/twitter_combined.csv'
-pageRank_redis_key = 'pr_L_0518_01'
+# filename = '/Users/Chen/Desktop/计算社会学/largeDataset/data/edges.csv'
+filename = '/Users/Chen/Desktop/计算社会学/smallDataset/twitter_combined.csv'
+persistenceFilename = '/Users/Chen/Desktop/计算社会学/pr_small_0525_nx01.txt'
 
 'main part of program'
 beginTime = time.time();
@@ -21,7 +21,7 @@ with open(filename) as file:  # 可以理解成if xxx is okay : then do sth;
 pr = nx.pagerank(G, alpha=0.85)
 
 # data persistence
-ru.redisSet(pageRank_redis_key, pr)
-# ru.redisHmset('pr_hash_0518_01')
+with open(persistenceFilename) as file:
+    file.write(str(pr))
 
 print("elapsed time: ", time.time() - beginTime)
