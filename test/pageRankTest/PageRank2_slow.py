@@ -18,7 +18,7 @@ a = {1: {2: 1,3: 1,4: 1}, 2: {1: 1, 4: 1}, 3: {1: 1}, 4: {2: 1, 3: 1}}  #本地�
 #需要修改的变量值
 # DICT_NAME = "twitterLarge"
 dataFilename = '/Users/Chen/Desktop/计算社会学/smallDataset/twitter_combined.csv'
-persistenceFilename = '/Users/Chen/Desktop/计算社会学/pr_large_01.txt'  #存放结果的地址
+persistenceFilename = '/Users/Chen/Desktop/计算社会学/pr_test_0526_nx01.txt'  #存放结果的地址
 
 
 def graphMove(a):  # 构造转移矩阵
@@ -56,7 +56,7 @@ def pageRank(p, m, v):  # 计算pageRank值
     """计算pageRank"""
     e = v  # e = [1/n, 1/n ... , 1/n] with n dimension
     print(e, type(e))
-    h = e/10000000  #算法的误差值, 误差在这个范围内认为两个变量相等
+    h = e/1000000  #算法的误差值, 误差在这个范围内认为两个变量相等
     print(h)
     count = 0
     nextV = p*multiply(m, v) + (1-p)*e

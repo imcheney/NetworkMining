@@ -73,7 +73,7 @@ def pageRank(rate, linkIn, linkOut, v):  # 计算pageRank值
     print('into pageRank...')
     initNodeValue = v[list(v.keys())[0]]
     tax = (1 - rate) * initNodeValue
-    allowedError = initNodeValue / 10000  # 算法的误差值10^-4, 误差在这个范围内认为两个变量相等
+    allowedError = initNodeValue / 10000  # 算法的误差值 = 每个元素初始值 x 10^-4, 误差在这个范围内认为两个变量相等, 这是经过精心选择的误差值, 平衡计算成本和结果的精确程度
     count = 0
     print('before multiplyWithIntoRate')
     nextV = multiplyWithIntoRate(linkIn, linkOut, v, rate)
@@ -121,7 +121,7 @@ if __name__ == "__main__":
     print("====PageRank执行, 计时开始")
     startTime = time.time()
 
-    linkIn, linkOut, nodes = retrieveFromFile()
+    linkIn, linkOut, nodes = retrieveFromTest()
     # linkIn, linkOut, nodes = retrieveFromTest()
     nodes = initProbOfEachNode(nodes)
     rate = 0.8  # 引入浏览当前网页的概率为p,假设p=0.8, 剩下的0.2是抽税, 会被均匀分给所有人

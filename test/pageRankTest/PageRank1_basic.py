@@ -31,7 +31,7 @@ def initPr(c):  # pr值得初始化
 def pageRank(p, m, v):  # 计算pageRank值
     """初始化"""
     e = v  # e = [1/n, 1/n ... , 1/n] with n dimension
-    h = e / 1000
+    h = e / 10000
     count = 0
     # np.all(), 当某个元素==0返回False, 当都非0返回True
     while not ((v - (p * dot(m, v) + (1 - p) * e)) <= h).all():

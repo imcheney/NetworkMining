@@ -35,7 +35,6 @@ def graphMove(a):  # 构造转移矩阵
 def initProbOfEachNode(nodes):  # pr值得初始化
     """初始化所有结点的pageank值"""
     N = len(nodes)
-    # pr = zeros((N, 1), dtype=float)  # 构造一个存放pr值的矩阵
     val = float(1) / N  # 把初始值总和1平分给所有的结点
     for key in nodes.keys():
         nodes[key] = val
@@ -75,7 +74,8 @@ def pageRank(rate, m, v):  # 计算pageRank值
     print('into pageRank...')
     initNodeValue = v[list(v.keys())[0]]
     tax = (1 - rate) * initNodeValue
-    allowedError = initNodeValue / 1000  # 算法的误差值10^-6, 误差在这个范围内认为两个变量相等
+    allowedError = initNodeValue / 10000  # 算法的误差值设定, 误差在这个范围内认为两个变量相等
+    print('allowedError: ', allowedError)
     count = 0
     print('before multiplyWithIntoRate')
     nextV = multiplyWithIntoRate(m, v, rate)
@@ -116,16 +116,17 @@ if __name__ == "__main__":
     print("====PageRank执行, 计时开始")
     startTime = time.time()
 
-    d1, nodes = retrieveFromFile()
+    d1, nodes = retrieveFromTest()
     # d1, nodes = retrieveFromTest()
     m = graphMove(d1)
     nodes = initProbOfEachNode(nodes)
+    print("node:", nodes)
     rate = 0.8  # 引入浏览当前网页的概率为p,假设p=0.8, 剩下的0.2是抽税, 会被均匀分给所有人
     PageRankResult = pageRank(rate, m, nodes)
 
     print("result: \n", PageRankResult)  # 计算pr值
-    f = open(persistenceFilename, 'w')
-    f.write(str(PageRankResult))
-    f.close()
+    # f = open(persistenceFilename, 'w')
+    # f.write(str(PageRankResult))
+    # f.close()
 
     print("====结束时间: ", time.time() - startTime)
