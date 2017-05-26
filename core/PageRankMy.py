@@ -1,16 +1,7 @@
 from numpy import *
 import time
 
-# 输入测试数据: 收获票数矩阵
-# a[2][1]代表结点V[2]收到来自结点V[1]的1个单位投票
-# a = array([[0, 1, 1, 0],
-#            [1, 0, 0, 1],
-#            [1, 0, 0, 1],
-#            [1, 1, 0, 0]], dtype=float)  # dtype指定为float
 
-#算法空间复杂度: 内存中需要维持M这个map(80m * 4byte = 320MB)和V向量(10m * 4byte = 40MB),
-#算法时间复杂度: 每轮迭代需要做两个矩阵的乘法, O(V + E).
-#小数据集测试成功, 285s
 
 ##############这些是本地的测试变量###############
 linkOut = {1: {2:1, 3:1, 4:1}, 2: {1:1, 4:1}, 3: {1:1}, 4: {2:1, 3:1}}  #本地测试变量a
@@ -38,15 +29,16 @@ def initProbOfEachNode(nodes):  # pr值得初始化
 
 
 def multiplyWithIntoRate(linkIn, linkOut, v, rate):
-    '对v列向量上的每个结点计算其本轮最后的pagerank值'
+    '''对v列向量上的每个结点计算其本轮最后的pagerank值.
+    函数需要遍历所有的结点, 对每个结点遍历所有的入度, 因此会遍历所有的边, 这个函数的时间复杂度是O(V+E)
+    '''
     print('into multiply...')
     v2 = {}
     for row in v.keys():   # 0~3
         print('row:', row)
         t = 0.0
-        if linkIn.__contains__(row):
+        if linkIn.__contains__(row):  # 由于并非每一个图中的结点都有入度, 因此这个if条件判断是必要的, 否则将报出key not found error
             for fromNodeKey in linkIn[row].keys():
-                # print(fromNodeKey)
                 t += 1/len(linkOut[fromNodeKey]) * v[fromNodeKey]  # t += your share of V[key] * importance of V[key]
             v2[row] = t * rate
         else:
@@ -123,6 +115,7 @@ if __name__ == "__main__":
 
     linkIn, linkOut, nodes = retrieveFromTest()
     # linkIn, linkOut, nodes = retrieveFromTest()
+
     nodes = initProbOfEachNode(nodes)
     rate = 0.8  # 引入浏览当前网页的概率为p,假设p=0.8, 剩下的0.2是抽税, 会被均匀分给所有人
     PageRankResult = pageRank(rate, linkIn, linkOut, nodes)
