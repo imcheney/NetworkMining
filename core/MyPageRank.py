@@ -1,19 +1,22 @@
+'''
+PageRankMy是我为这个项目写的, 占小内存, 消耗时间O(V+E)的实现.
+效率上大概耗时是networkx包的pagerank函数的两倍左右, 但是我的空间开销更加小, 因此能够放得下更大的数据集.
+'''
+
 from numpy import *
 import time
 
-
-
 ##############这些是本地的测试变量###############
-linkOut = {1: {2:1, 3:1, 4:1}, 2: {1:1, 4:1}, 3: {1:1}, 4: {2:1, 3:1}}  #本地测试变量a
-linkIn = {1: {2:1,3:1}, 2:{1:1,4:1}, 3:{1:1,4:1}, 4:{1:1, 2:1}}
+linkOut = {1: [2, 3, 4], 2: [1, 4], 3: [1], 4: [2, 3]}  #本地测试变量a
+linkIn = {1: [2,3], 2:[1,4], 3:[1,4], 4:[1, 2]}
 testV = {1: 0, 2: 0, 3: 0, 4: 0}  #本地测试变量
 ##############################################
 
 
 #需要修改的变量值
-dataFilename = '/Users/Chen/Desktop/计算社会学/largeDataset/data/edges.csv'
-# dataFilename = '/Users/Chen/Desktop/计算社会学/smallDataset/twitter_combined.csv'
-persistenceFilename = '/Users/Chen/Desktop/计算社会学/pr_large_0525_my01.txt'  #存放结果的地址
+# dataFilename = '/Users/Chen/Desktop/计算社会学/largeDataset/data/edges.csv'
+dataFilename = '/Users/Chen/Desktop/计算社会学/smallDataset/twitter_combined.csv'
+persistenceFilename = '/Users/Chen/Desktop/计算社会学/0526_prSmallWithList_my02.txt'  #存放结果的地址
 
 
 def initProbOfEachNode(nodes):  # pr值得初始化
@@ -35,14 +38,14 @@ def multiplyWithIntoRate(linkIn, linkOut, v, rate):
     print('into multiply...')
     v2 = {}
     for row in v.keys():   # 0~3
-        print('row:', row)
+        # print('row:', row)
         t = 0.0
         if linkIn.__contains__(row):  # 由于并非每一个图中的结点都有入度, 因此这个if条件判断是必要的, 否则将报出key not found error
-            for fromNodeKey in linkIn[row].keys():
-                t += 1/len(linkOut[fromNodeKey]) * v[fromNodeKey]  # t += your share of V[key] * importance of V[key]
+            for fromNode in linkIn[row]:
+                t += 1/len(linkOut[fromNode]) * v[fromNode]  # t += your share of V[key] * importance of V[key]
             v2[row] = t * rate
         else:
-            v2[row] = 0
+            v2[row] = 0.0
     print('exit multiply...')
     return v2
 
@@ -53,7 +56,6 @@ def addTaxationToEveryNode(tax, mainPart):
 
 
 def diffSmallEnough(nextV, v, allowedError):
-    print('into diffSmallEnough')
     for key in v.keys():
         if nextV[key] - v[key] > allowedError:
             return False
@@ -67,14 +69,10 @@ def pageRank(rate, linkIn, linkOut, v):  # 计算pageRank值
     tax = (1 - rate) * initNodeValue
     allowedError = initNodeValue / 10000  # 算法的误差值 = 每个元素初始值 x 10^-4, 误差在这个范围内认为两个变量相等, 这是经过精心选择的误差值, 平衡计算成本和结果的精确程度
     count = 0
-    print('before multiplyWithIntoRate')
     nextV = multiplyWithIntoRate(linkIn, linkOut, v, rate)
-    print('after multiplyWithIntoRate')
     addTaxationToEveryNode(tax, nextV)
 
-    print('before while check')
     while not diffSmallEnough(nextV, v, allowedError):
-        print('into a while loop...')
         v = nextV
         nextV = multiplyWithIntoRate(linkIn, linkOut, v, rate)
         addTaxationToEveryNode(tax, nextV)  # update nextV
@@ -92,14 +90,14 @@ def retrieveFromFile():
         for line in file:
             head, tail = [int(x) for x in line.split(',')]
             if not linkOut.__contains__(head):
-                linkOut[head] = {}
+                linkOut[head] = []
                 nodes[head] = 0
             if not linkIn.__contains__(tail):
-                linkIn[tail] = {}
+                linkIn[tail] = []
                 nodes[tail] = 0
 
-            linkOut[head][tail] = 1
-            linkIn[tail][head] = 1
+            linkOut[head].append(tail)
+            linkIn[tail].append(head)
 
             print(head, tail)
     return linkOut, linkIn, nodes
@@ -113,7 +111,7 @@ if __name__ == "__main__":
     print("====PageRank执行, 计时开始")
     startTime = time.time()
 
-    linkIn, linkOut, nodes = retrieveFromTest()
+    linkIn, linkOut, nodes = retrieveFromFile()
     # linkIn, linkOut, nodes = retrieveFromTest()
 
     nodes = initProbOfEachNode(nodes)

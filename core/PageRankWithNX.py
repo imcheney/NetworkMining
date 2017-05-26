@@ -7,7 +7,7 @@ import networkx as nx
 '''some static vars need to set before pageRank goes'''
 # filename = '/Users/Chen/Desktop/计算社会学/largeDataset/data/edges.csv'
 filename = '/Users/Chen/Desktop/计算社会学/smallDataset/twitter_combined.csv'
-persistenceFilename = '/Users/Chen/Desktop/计算社会学/pr_small_0526_nx01.txt'
+persistenceFilename = '/Users/Chen/Desktop/计算社会学/0526_prSmall_nx02.txt'
 
 linkOut = {1: {2:1, 3:1, 4:1}, 2: {1:1, 4:1}, 3: {1:1}, 4: {2:1, 3:1}}  #本地测试变量a
 linkIn = {1: {2:1,3:1}, 2:{1:1,4:1}, 3:{1:1,4:1}, 4:{1:1, 2:1}}
@@ -33,11 +33,13 @@ if __name__ == "__main__":
     'main part of program'
     beginTime = time.time();
     G = nx.DiGraph()
-    retrieveFromTest(G)
-    pr = nx.pagerank(G, alpha=0.80)
+    retrieveFromFile(G)
+    PageRankResult = nx.pagerank(G, alpha=0.80)
 
     # data persistence
-    # with open(persistenceFilename) as file:
-    #     file.write(str(pr))
-    print("PageRank Result:", pr)
+    f = open(persistenceFilename, 'w')
+    f.write(str(PageRankResult))
+    f.close()
+
+    print("PageRank Result:", PageRankResult)
     print("elapsed time: ", time.time() - beginTime)
