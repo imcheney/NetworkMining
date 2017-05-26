@@ -1,9 +1,8 @@
-'''
+"""
 PageRankMy是我为这个项目写的, 占小内存, 消耗时间O(V+E)的实现.
 效率上大概耗时是networkx包的pagerank函数的两倍左右, 但是我的空间开销更加小, 因此能够放得下更大的数据集.
-'''
+"""
 
-# from numpy import *
 import time
 
 ##############这些是本地的测试变量###############
@@ -14,26 +13,30 @@ testV = {1: 0, 2: 0, 3: 0, 4: 0}  #本地测试变量
 
 
 #需要修改的变量值
-dataFilename = '/Users/Chen/Desktop/计算社会学/largeDataset/data/edges.csv'
-# dataFilename = '/Users/Chen/Desktop/计算社会学/smallDataset/twitter_combined.csv'
-persistenceFilename = '/Users/Chen/Desktop/计算社会学/0526_PrLargeWithPypyOn_V1.txt'  #存放结果的地址
+# dataFilename = '/Users/Chen/Desktop/计算社会学/largeDataset/data/edges.csv'
+dataFilename = '/Users/Chen/Desktop/计算社会学/smallDataset/twitter_combined.csv'
+persistenceFilename = '/Users/Chen/Desktop/计算社会学/0526_prSmallWithCython_my04.txt'  #存放结果的地址
 
 
 def initProbOfEachNode(nodes):  # pr值得初始化
     """初始化所有结点的pageank值"""
     N = len(nodes)
+    print('N:', N)
+    # pr = zeros((N, 1), dtype=float)  # 构造一个存放pr值的矩阵
     val = float(1) / N  # 把初始值总和1平分给所有的结点
     for key in nodes.keys():
         nodes[key] = val
+    print(nodes, "\n===================================================")
     return nodes
 
 
-def multiplyWithIntoRate(linkIn, linkOut, v, rate):
+def multiplyWithIntoRate(linkIn, linkOut, v, float rate):
     '''对v列向量上的每个结点计算其本轮最后的pagerank值.
     函数需要遍历所有的结点, 对每个结点遍历所有的入度, 因此会遍历所有的边, 这个函数的时间复杂度是O(V+E)
     '''
     print('into multiply...')
     v2 = {}
+    cdef double t = 0.0
     for row in v.keys():   # 0~3
         # print('row:', row)
         t = 0.0
@@ -75,7 +78,7 @@ def pageRank(rate, linkIn, linkOut, v):  # 计算pageRank值
         addTaxationToEveryNode(tax, nextV)  # update nextV
         count += 1
         print('round count: %d' % count)
-    print("exit, total rounds count: ", count)
+    print("迭代轮数 used rounds count: ", count)
     return v
 
 
@@ -106,18 +109,18 @@ def retrieveFromTest():
 
 def go():
     global linkIn, linkOut
-    print("====PageRank starts, time count starts too...")
-    startTime = time.time()
+    print("====PageRank执行, 计时开始")
+    # startTime = time.time()
     linkIn, linkOut, nodes = retrieveFromFile()
     # linkIn, linkOut, nodes = retrieveFromTest()
     nodes = initProbOfEachNode(nodes)
     rate = 0.8  # 引入浏览当前网页的概率为p,假设p=0.8, 剩下的0.2是抽税, 会被均匀分给所有人
     PageRankResult = pageRank(rate, linkIn, linkOut, nodes)
     print("result: \n", PageRankResult)  # 计算pr值
-    f = open(persistenceFilename, 'w')
-    f.write(str(PageRankResult))
-    f.close()
-    print("====elapsed time: ", time.time() - startTime)
+    # f = open(persistenceFilename, 'w')
+    # f.write(str(PageRankResult))
+    # f.close()
+    # print("====消耗时间: ", time.time() - startTime)
 
 
 if __name__ == "__main__":

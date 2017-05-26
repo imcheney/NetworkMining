@@ -1,6 +1,8 @@
 # apply networkx
 
 import time
+
+import matplotlib.pyplot as plt
 import networkx as nx
 
 
@@ -18,6 +20,7 @@ def retrieveFromTest(G):
     for nodeOut in linkOut.keys():
         for nodeIn in linkOut[nodeOut].keys():
             G.add_edge(nodeOut, nodeIn)
+    return G
 
 
 def retrieveFromFile(G):
@@ -27,19 +30,21 @@ def retrieveFromFile(G):
             head, tail = [int(x) for x in line.split(',')]
             print(head, tail)
             G.add_edge(head, tail)
-
+    return G
 
 if __name__ == "__main__":
     'main part of program'
     beginTime = time.time();
     G = nx.DiGraph()
-    retrieveFromFile(G)
+    # G = retrieveFromTest(G)
+    G = retrieveFromFile(G)
     PageRankResult = nx.pagerank(G, alpha=0.80)
-
+    nx.draw(G)  # 画出图G
+    plt.show()  # 显示出来
     # data persistence
-    f = open(persistenceFilename, 'w')
-    f.write(str(PageRankResult))
-    f.close()
+    # f = open(persistenceFilename, 'w')
+    # f.write(str(PageRankResult))
+    # f.close()
 
     print("PageRank Result:", PageRankResult)
     print("elapsed time: ", time.time() - beginTime)
