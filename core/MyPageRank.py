@@ -14,15 +14,15 @@ testV = {1: 0, 2: 0, 3: 0, 4: 0}  #本地测试变量
 
 
 #需要修改的变量值
-dataFilename = '/Users/Chen/Desktop/计算社会学/largeDataset/data/edges.csv'
-# dataFilename = '/Users/Chen/Desktop/计算社会学/smallDataset/twitter_combined.csv'
-persistenceFilename = '/Users/Chen/Desktop/计算社会学/0526_PrLargeWithPypyOn_V1.txt'  #存放结果的地址
+# dataFilename = '/Users/Chen/Desktop/计算社会学/largeDataset/data/edges.csv'
+dataFilename = '/Users/Chen/Desktop/计算社会学/smallDataset/twitter_combined.csv'
+persistenceFilename = '/Users/Chen/Desktop/计算社会学/0527_PrSmallWithPypyCompatible_V2.txt'  #存放结果的地址
 
 
 def initProbOfEachNode(nodes):  # pr值得初始化
     """初始化所有结点的pageank值"""
     N = len(nodes)
-    val = float(1) / N  # 把初始值总和1平分给所有的结点
+    val = 1.0 / N  # 把初始值总和1平分给所有的结点
     for key in nodes.keys():
         nodes[key] = val
     return nodes
@@ -39,7 +39,7 @@ def multiplyWithIntoRate(linkIn, linkOut, v, rate):
         t = 0.0
         if linkIn.__contains__(row):  # 由于并非每一个图中的结点都有入度, 因此这个if条件判断是必要的, 否则将报出key not found error
             for fromNode in linkIn[row]:
-                t += 1/len(linkOut[fromNode]) * v[fromNode]  # t += your share of V[key] * importance of V[key]
+                t += 1.0/len(linkOut[fromNode]) * v[fromNode]  # t += your share of V[key] * importance of V[key]
             v2[row] = t * rate
         else:
             v2[row] = 0.0
@@ -64,7 +64,7 @@ def pageRank(rate, linkIn, linkOut, v):  # 计算pageRank值
     print('into pageRank...')
     initNodeValue = v[list(v.keys())[0]]
     tax = (1 - rate) * initNodeValue
-    allowedError = initNodeValue / 10000  # 算法的误差值 = 每个元素初始值 x 10^-4, 误差在这个范围内认为两个变量相等, 这是经过精心选择的误差值, 平衡计算成本和结果的精确程度
+    allowedError = initNodeValue / 10000.0  # 算法的误差值 = 每个元素初始值 x 10^-4, 误差在这个范围内认为两个变量相等, 这是经过精心选择的误差值, 平衡计算成本和结果的精确程度
     count = 0
     nextV = multiplyWithIntoRate(linkIn, linkOut, v, rate)
     addTaxationToEveryNode(tax, nextV)
