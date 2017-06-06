@@ -1,5 +1,6 @@
 '''
-用来查看存储成txt文本文件形式的PageRank result.
+用来查看存储成txt文本文件形式的PageRank result;
+注意nx包和我自己写的算法的结果可能有出入, 这是由于nx没有设定rate, 而我有设定taxation rate=0.8;
 '''
 
 persistenceFilename = '/Users/Chen/Desktop/计算社会学/0527_PrSmallWithPypyCompatible_V2.txt'  #存放结果的地址

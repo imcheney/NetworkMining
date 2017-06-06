@@ -16,7 +16,7 @@ testV = {1: 0, 2: 0, 3: 0, 4: 0}  #本地测试变量
 #需要修改的变量值
 # dataFilename = '/Users/Chen/Desktop/计算社会学/largeDataset/data/edges.csv'
 dataFilename = '/Users/Chen/Desktop/计算社会学/smallDataset/twitter_combined.csv'
-persistenceFilename = '/Users/Chen/Desktop/计算社会学/0527_PrSmallWithPypyCompatible_V2.txt'  #存放结果的地址
+persistenceFilename = '/Users/Chen/Desktop/计算社会学/0527_PrSmallWithPypyCompatible_V3.txt'  #存放结果的地址
 
 
 def initProbOfEachNode(nodes):  # pr值得初始化
