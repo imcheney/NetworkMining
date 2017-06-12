@@ -1,5 +1,5 @@
 '''
-PageRankMy是我为这个项目写的, 占小内存, 消耗时间O(V+E)的实现.
+MyPageRank是我为这个项目写的, 占小内存, 消耗时间O(V+E)的PageRank实现.
 效率上大概耗时是networkx包的pagerank函数的两倍左右, 但是我的空间开销更加小, 因此能够放得下更大的数据集.
 '''
 
@@ -7,16 +7,16 @@ PageRankMy是我为这个项目写的, 占小内存, 消耗时间O(V+E)的实现
 import time
 
 ##############这些是本地的测试变量###############
-linkOut = {1: [2, 3, 4], 2: [1, 4], 3: [1], 4: [2, 3]}  #本地测试变量a
-linkIn = {1: [2,3], 2:[1,4], 3:[1,4], 4:[1, 2]}
-testV = {1: 0, 2: 0, 3: 0, 4: 0}  #本地测试变量
+linkOut = {1: [2, 3, 4], 2: [1, 4], 3: [1], 4: [2, 3]}  # 本地测试变量a
+linkIn = {1: [2, 3], 2: [1, 4], 3: [1, 4], 4: [1, 2]}
+testV = {1: 0, 2: 0, 3: 0, 4: 0}  # 本地测试变量
 ##############################################
 
 
-#需要修改的变量值
-# dataFilename = '/Users/Chen/Desktop/计算社会学/largeDataset/data/edges.csv'
-dataFilename = '/Users/Chen/Desktop/计算社会学/smallDataset/twitter_combined.csv'
-persistenceFilename = '/Users/Chen/Desktop/计算社会学/0527_PrSmallWithPypyCompatible_V3.txt'  #存放结果的地址
+# 需要修改的变量值
+dataFilename = r'/Users/Chen/Desktop/计算社会学/过去的/largeDataset/data/edges.csv'
+# dataFilename = '/Users/Chen/Desktop/计算社会学/smallDataset/twitter_combined.csv'
+persistenceFilename = r'/Users/Chen/Desktop/计算社会学/0607_large_pypy_v1.txt'  # 存放结果的地址
 
 
 def initProbOfEachNode(nodes):  # pr值得初始化
@@ -34,12 +34,12 @@ def multiplyWithIntoRate(linkIn, linkOut, v, rate):
     '''
     print('into multiply...')
     v2 = {}
-    for row in v.keys():   # 0~3
+    for row in v.keys():  # 0~3
         # print('row:', row)
         t = 0.0
         if linkIn.__contains__(row):  # 由于并非每一个图中的结点都有入度, 因此这个if条件判断是必要的, 否则将报出key not found error
             for fromNode in linkIn[row]:
-                t += 1.0/len(linkOut[fromNode]) * v[fromNode]  # t += your share of V[key] * importance of V[key]
+                t += 1.0 / len(linkOut[fromNode]) * v[fromNode]  # t += your share of V[key] * importance of V[key]
             v2[row] = t * rate
         else:
             v2[row] = 0.0
@@ -113,7 +113,7 @@ def go():
     nodes = initProbOfEachNode(nodes)
     rate = 0.8  # 引入浏览当前网页的概率为p,假设p=0.8, 剩下的0.2是抽税, 会被均匀分给所有人
     PageRankResult = pageRank(rate, linkIn, linkOut, nodes)
-    print("result: \n", PageRankResult)  # 计算pr值
+    print("result: \n", PageRankResult)  # 计算PR值
     f = open(persistenceFilename, 'w')
     f.write(str(PageRankResult))
     f.close()
